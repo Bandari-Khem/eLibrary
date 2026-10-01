@@ -1,6 +1,5 @@
 <?php
 $pageTitle = 'Books';
-require __DIR__ . '/includes/header.php';
 
 $term = trim($_GET['q'] ?? '');
 $categoryId = (int)($_GET['category'] ?? 0);
@@ -30,6 +29,11 @@ if ($categoryName !== '') {
     $findCategory->execute([$categoryId]);
     $selectedCategoryName = (string)($findCategory->fetchColumn() ?: '');
 }
+$isCategoryView = $categoryId > 0;
+$pageTitle = $isCategoryView
+    ? ($selectedCategoryName !== '' ? $selectedCategoryName . ' Books' : 'Category not found')
+    : 'Book Catalogue';
+require __DIR__ . '/includes/header.php';
 
 $where = ["b.status='published'"];
 $params = [];
@@ -70,9 +74,10 @@ $books = $query->fetchAll();
 ?>
 <div class="section-head">
     <div>
-        <h1><?= $selectedCategoryName ? e($selectedCategoryName) : 'Book Catalogue' ?></h1>
-        <p class="muted"><?= $selectedCategoryName ? 'Books in this category.' : 'Search by title or author, or filter by category.' ?></p>
+        <h1><?= $isCategoryView ? e($selectedCategoryName ?: 'Category not found') : 'Book Catalogue' ?></h1>
+        <p class="muted"><?= $isCategoryView ? 'Books in this category.' : 'Search by title or author, or filter by category.' ?></p>
     </div>
+    <?php if ($isCategoryView): ?><a href="<?= url('index.php#categories') ?>">All categories</a><?php endif; ?>
 </div>
 <form class="search-bar" method="get">
     <?php if ($categoryId): ?><input type="hidden" name="category" value="<?= $categoryId ?>"><?php endif; ?>
@@ -81,6 +86,8 @@ $books = $query->fetchAll();
 </form>
 <form id="filterform" method="get" class="form-grid">
     <input type="hidden" name="q" value="<?= e($term) ?>">
+    <?php if ($isCategoryView): ?><input type="hidden" name="category" value="<?= $categoryId ?>"><?php endif; ?>
+    <?php if (!$isCategoryView): ?>
     <div class="field">
         <label for="category-search">Category</label>
         <input id="category-search" list="category-options" name="category_name" value="<?= e($selectedCategoryName) ?>" placeholder="Type a category name">
@@ -88,6 +95,7 @@ $books = $query->fetchAll();
             <?php foreach ($categories as $category): ?><option value="<?= e($category['name']) ?>"><?php endforeach; ?>
         </datalist>
     </div>
+    <?php endif; ?>
     <div class="field">
         <label for="sort">Sort</label>
         <select id="sort" name="sort">
