@@ -212,6 +212,36 @@ a:hover {
     margin: 0
 }
 
+.lead {
+    max-width: 760px;
+    color: #536074;
+    font-size: 1.15rem
+}
+
+.category-card {
+    color: inherit;
+    transition: transform .15s ease, border-color .15s ease
+}
+
+.category-card:hover {
+    transform: translateY(-2px);
+    border-color: #9bb4ef;
+    text-decoration: none
+}
+
+.category-card h3,
+.category-card p {
+    margin: 0
+}
+
+.review-card {
+    min-width: 0
+}
+
+.review-card p {
+    overflow-wrap: anywhere
+}
+
 .grid {
     display: grid;
     gap: 18px

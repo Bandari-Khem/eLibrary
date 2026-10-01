@@ -16,9 +16,6 @@ if (!$b || $b['file_type'] !== 'pdf') {
     redirect('book-details.php?id=' . $book);
 }
 $uid = (int)current_user()['id'];
-$bm = db()->prepare('SELECT id FROM bookmarks WHERE user_id=? AND book_id=? AND page_number=?');
-$bm->execute([$uid, $book, max(1, (int)($_GET['page'] ?? 1))]);
-$initialBookmarked = (bool)$bm->fetchColumn();
 $p = db()->prepare('SELECT current_page,total_pages FROM reading_progress WHERE user_id=? AND book_id=?');
 $p->execute([$uid, $book]);
 $prog = $p->fetch() ?: ['current_page' => 1, 'total_pages' => null]; ?>
@@ -33,8 +30,7 @@ $prog = $p->fetch() ?: ['current_page' => 1, 'total_pages' => null]; ?>
         <div class="reader-toolbar">
             <div><button id="prev" class="btn btn-sm btn-secondary">←</button> <button id="next"
                     class="btn btn-sm btn-secondary">→</button> <span>Page <span id="page_num">1</span> / <span
-                        id="page_count">?</span></span></div><button id="bookmark" class="btn btn-sm">🔖 <span
-                    id="bookmark_text"><?= $initialBookmarked ? 'Remove bookmark' : 'Bookmark page' ?></span></button>
+                        id="page_count">?</span></span></div>
         </div>
         <div class="reader-canvas"><canvas id="pdf-canvas"></canvas></div>
     </div>
@@ -102,24 +98,6 @@ $prog = $p->fetch() ?: ['current_page' => 1, 'total_pages' => null]; ?>
         if (pdfDoc && pageNum < pdfDoc.numPages) {
             pageNum++;
             queue(pageNum)
-        }
-    };
-    document.getElementById('bookmark').onclick = async () => {
-        const body = new URLSearchParams({
-            csrf_token: <?= json_encode(csrf_token()) ?>,
-            book_id: '<?= $book ?>',
-            page_number: String(pageNum)
-        });
-        const res = await fetch(<?= json_encode(url('user/toggle-bookmark.php')) ?>, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body
-        });
-        if (res.ok) {
-            const el = document.getElementById('bookmark_text');
-            el.textContent = el.textContent === 'Bookmark page' ? 'Remove bookmark' : 'Bookmark page';
         }
     };
     pdfjsLib.getDocument(url).promise.then(p => {

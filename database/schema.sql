@@ -1,8 +1,8 @@
 -- ============================================================
 -- E-LIBRARY SYSTEM
--- Complete Database Schema
+-- Database Schema
 -- Version: 1.0
--- Purpose: BCA project + portfolio foundation
+-- Purpose: scoped fourth-semester BCA digital library project
 -- ============================================================
 
 SET SQL_MODE = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
@@ -11,15 +11,12 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ------------------------------------------------------------
 -- Drop tables in dependency-safe order
 -- ------------------------------------------------------------
+DROP TABLE IF EXISTS favorites;
 DROP TABLE IF EXISTS review_reports;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS review_ratings;
-DROP TABLE IF EXISTS downloads;
-DROP TABLE IF EXISTS favorites;
-DROP TABLE IF EXISTS bookmarks;
 DROP TABLE IF EXISTS reading_history;
 DROP TABLE IF EXISTS reading_progress;
-DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS activity_logs;
 DROP TABLE IF EXISTS book_categories;
 DROP TABLE IF EXISTS book_authors;
@@ -273,39 +270,6 @@ CREATE TABLE reading_history (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- 9. BOOKMARKS
--- ============================================================
-CREATE TABLE bookmarks (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    user_id INT UNSIGNED NOT NULL,
-    book_id INT UNSIGNED NOT NULL,
-
-    page_number INT UNSIGNED NOT NULL,
-    note VARCHAR(500) NULL,
-
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    UNIQUE KEY uq_bookmark_user_book_page
-        (user_id, book_id, page_number),
-
-    INDEX idx_bookmarks_user (user_id),
-    INDEX idx_bookmarks_book (book_id),
-
-    CONSTRAINT fk_bookmarks_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT fk_bookmarks_book
-        FOREIGN KEY (book_id)
-        REFERENCES books(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
 -- 10. FAVORITES
 -- ============================================================
 CREATE TABLE favorites (
@@ -335,144 +299,30 @@ CREATE TABLE favorites (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- 11. DOWNLOADS
--- ============================================================
-CREATE TABLE downloads (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    user_id INT UNSIGNED NOT NULL,
-    book_id INT UNSIGNED NOT NULL,
-    file_id INT UNSIGNED NOT NULL,
-
-    downloaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    INDEX idx_downloads_user (user_id),
-    INDEX idx_downloads_book (book_id),
-    INDEX idx_downloads_file (file_id),
-    INDEX idx_downloads_date (downloaded_at),
-
-    CONSTRAINT fk_downloads_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT fk_downloads_book
-        FOREIGN KEY (book_id)
-        REFERENCES books(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT fk_downloads_file
-        FOREIGN KEY (file_id)
-        REFERENCES book_files(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- 12. REVIEW RATINGS
--- Meaning of each star rating
--- ============================================================
-CREATE TABLE review_ratings (
-    rating TINYINT UNSIGNED PRIMARY KEY,
-    label VARCHAR(50) NOT NULL,
-    meaning VARCHAR(150) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO review_ratings (rating, label, meaning) VALUES
-(1, 'Very Poor', 'The book did not meet expectations.'),
-(2, 'Poor', 'The book had several weaknesses.'),
-(3, 'Average', 'The book was satisfactory overall.'),
-(4, 'Good', 'The book was useful and enjoyable.'),
-(5, 'Excellent', 'The book was highly useful and strongly recommended.');
-
--- ============================================================
--- 13. REVIEWS
+-- 11. REVIEWS
+-- One learner review per book; ratings are from 1 to 5.
 -- ============================================================
 CREATE TABLE reviews (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
     user_id INT UNSIGNED NOT NULL,
     book_id INT UNSIGNED NOT NULL,
-
     rating TINYINT UNSIGNED NOT NULL,
-
-    review_reason VARCHAR(150) NULL,
-    review_text TEXT NULL,
-
-    status ENUM('pending', 'approved', 'hidden')
-        NOT NULL DEFAULT 'pending',
-
+    review_text VARCHAR(1000) NOT NULL,
+    status ENUM('approved', 'hidden') NOT NULL DEFAULT 'approved',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
-
     UNIQUE KEY uq_review_user_book (user_id, book_id),
-
-    INDEX idx_reviews_book (book_id),
-    INDEX idx_reviews_user (user_id),
-    INDEX idx_reviews_status (status),
-    INDEX idx_reviews_rating (rating),
-
-    CONSTRAINT chk_review_rating
-        CHECK (rating BETWEEN 1 AND 5),
-
-    CONSTRAINT fk_reviews_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT fk_reviews_book
-        FOREIGN KEY (book_id)
-        REFERENCES books(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT fk_reviews_rating
-        FOREIGN KEY (rating)
-        REFERENCES review_ratings(rating)
-        ON DELETE RESTRICT
-        ON UPDATE RESTRICT
+    INDEX idx_reviews_book_date (book_id, created_at),
+    CONSTRAINT chk_review_rating CHECK (rating BETWEEN 1 AND 5),
+    CONSTRAINT fk_reviews_user FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_reviews_book FOREIGN KEY (book_id) REFERENCES books(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- 14. REVIEW REPORTS
--- ============================================================
-CREATE TABLE review_reports (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    review_id BIGINT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NOT NULL,
-
-    reason VARCHAR(255) NOT NULL,
-
-    status ENUM('pending', 'reviewed', 'dismissed')
-        NOT NULL DEFAULT 'pending',
-
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    UNIQUE KEY uq_review_report_user (review_id, user_id),
-
-    INDEX idx_review_reports_status (status),
-    INDEX idx_review_reports_review (review_id),
-
-    CONSTRAINT fk_review_reports_review
-        FOREIGN KEY (review_id)
-        REFERENCES reviews(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT fk_review_reports_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- 15. ACTIVITY LOGS
+-- 12. ACTIVITY LOGS
 -- ============================================================
 CREATE TABLE activity_logs (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -503,33 +353,8 @@ CREATE TABLE activity_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- 16. NOTIFICATIONS
 -- ============================================================
-CREATE TABLE notifications (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    user_id INT UNSIGNED NULL,
-
-    title VARCHAR(150) NOT NULL,
-    message TEXT NOT NULL,
-
-    is_read BOOLEAN NOT NULL DEFAULT FALSE,
-
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    INDEX idx_notifications_user (user_id),
-    INDEX idx_notifications_read (is_read),
-    INDEX idx_notifications_date (created_at),
-
-    CONSTRAINT fk_notifications_user
-        FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- 17. LIBRARY SETTINGS
+-- 13. LIBRARY SETTINGS
 -- ============================================================
 CREATE TABLE library_settings (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -546,11 +371,10 @@ INSERT INTO library_settings (setting_key, setting_value) VALUES
 ('library_name', 'E-Library'),
 ('maintenance_mode', '0'),
 ('max_upload_mb', '20'),
-('contact_email', ''),
-('allowed_file_types', 'pdf');
+('contact_email', '');
 
 -- ============================================================
--- 18. CONTACT MESSAGES
+-- 14. CONTACT MESSAGES
 -- ============================================================
 CREATE TABLE contact_messages (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -570,7 +394,7 @@ CREATE TABLE contact_messages (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- 19. FAQ
+-- 15. FAQ
 -- ============================================================
 CREATE TABLE faq (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -596,7 +420,7 @@ INSERT INTO faq (question, answer, display_order, status) VALUES
 ('What is E-Library?', 'E-Library is a web-based platform for browsing, reading and managing digital books.', 1, TRUE),
 ('Do I need an account to browse books?', 'No. Public users can browse the catalogue and view book information without logging in.', 2, TRUE),
 ('Do I need an account to read or download books?', 'Yes. Reading, downloading and personal library features require an authenticated account.', 3, TRUE),
-('Can I leave a review for a book?', 'Yes. Logged-in users can rate a book from 1 to 5 stars and submit a review.', 4, TRUE);
+('Can I leave a review?', 'Yes. Sign in to rate a book and leave a short message.', 4, TRUE);
 
 -- ============================================================
 -- END OF E-LIBRARY DATABASE SCHEMA

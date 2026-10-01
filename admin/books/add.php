@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
             </div>
             <div class="field">
-                <label>Book file</label><input type="file" name="book_file" required accept=".pdf,.epub,.mobi"><small
+                <label>Book file (PDF only)</label><input type="file" name="book_file" required accept=".pdf"><small
                     class="muted">Allowed:
                     <?= e(implode(', ', allowed_file_types())) ?> ·
                     Max <?= e((string)setting('max_upload_mb', 20)) ?> MB</small>

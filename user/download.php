@@ -47,8 +47,6 @@ header('Cache-Control: private, no-store');
 $name = preg_replace('/[^A-Za-z0-9._ -]/', '_', basename($f['file_name']));
 header('Content-Disposition: ' . ($inline ? 'inline' : 'attachment') . '; filename="' . $name . '"');
 if (!$inline) {
-    $s = db()->prepare('INSERT INTO downloads(user_id,book_id,file_id) VALUES(?,?,?)');
-    $s->execute([(int)current_user()['id'], (int)$f['book_id'], (int)$f['id']]);
     $s = db()->prepare('INSERT INTO reading_history(user_id,book_id,action) VALUES(?,?,\'download\')');
     $s->execute([(int)current_user()['id'], (int)$f['book_id']]);
     log_activity((int)current_user()['id'], 'download', 'book', (int)$f['book_id']);

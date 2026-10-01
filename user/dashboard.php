@@ -6,7 +6,7 @@ $us = db()->prepare('SELECT avatar FROM users WHERE id=?');
 $us->execute([$uid]);
 $avatar = (string)($us->fetchColumn() ?: '📚');
 $stats = [];
-foreach (['favorites' => 'SELECT COUNT(*) FROM favorites WHERE user_id=?', 'bookmarks' => 'SELECT COUNT(*) FROM bookmarks WHERE user_id=?', 'reviews' => 'SELECT COUNT(*) FROM reviews WHERE user_id=?', 'history' => 'SELECT COUNT(*) FROM reading_history WHERE user_id=?'] as $k => $sql) {
+foreach (['favorites' => 'SELECT COUNT(*) FROM favorites WHERE user_id=?', 'history' => 'SELECT COUNT(*) FROM reading_history WHERE user_id=?'] as $k => $sql) {
     $s = db()->prepare($sql);
     $s->execute([$uid]);
     $stats[$k] = (int)$s->fetchColumn();
@@ -23,8 +23,6 @@ $reading = $s->fetchAll(); ?>
     </div>
     <div class="stats">
         <div class="stat"><span>Favourites</span><strong><?= $stats['favorites'] ?></strong></div>
-        <div class="stat"><span>Bookmarks</span><strong><?= $stats['bookmarks'] ?></strong></div>
-        <div class="stat"><span>Reviews</span><strong><?= $stats['reviews'] ?></strong></div>
         <div class="stat"><span>History</span><strong><?= $stats['history'] ?></strong></div>
     </div>
 </section>

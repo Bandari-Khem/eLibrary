@@ -22,12 +22,6 @@ $flashes = get_flashes(); ?>
             <a href="<?= url('admin/categories/index.php') ?>">Categories</a>
             <a href="<?= url('admin/authors/index.php') ?>">Authors</a>
             <a href="<?= url('admin/files/index.php') ?>">Files</a>
-            <a href="<?= url('admin/reviews/index.php') ?>">Reviews</a>
-            <a href="<?= url('admin/reports/index.php') ?>">Reports</a>
-            <a href="<?= url('admin/contact/index.php') ?>">Messages</a>
-            <a href="<?= url('admin/faq/index.php') ?>">FAQ</a>
-            <a href="<?= url('admin/activity-logs/index.php') ?>">Activity Logs</a>
-            <a href="<?= url('admin/settings/index.php') ?>">Settings</a>
             <a href="<?= url('index.php') ?>">View
                 site</a>
             <a href="<?= url('logout.php') ?>">Logout</a>

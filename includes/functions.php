@@ -94,18 +94,12 @@ function paginate(int $page, int $perPage, int $total): array
 }
 function allowed_file_types(): array
 {
-    $raw = (string)setting('allowed_file_types', 'pdf');
-    $a = array_values(array_filter(array_map(fn($x) => strtolower(trim($x)), explode(',', $raw))));
-    return $a ?: ['pdf'];
+    // The reader in this student project supports PDF only.
+    return ['pdf'];
 }
 function file_type_from_ext(string $ext): string
 {
-    return match (strtolower($ext)) {
-        'pdf' => 'pdf',
-        'epub' => 'epub',
-        'mobi' => 'mobi',
-        default => 'other'
-    };
+    return strtolower($ext) === 'pdf' ? 'pdf' : 'other';
 }
 function format_bytes(int $bytes): string
 {

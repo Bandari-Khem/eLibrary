@@ -11,12 +11,9 @@
 | TC-14 | Profile/avatar | Member since and avatar persist; role is not shown in profile. | Pending runtime |
 | TC-15 | Activity logs | Search/action/date filters return matching records. | Pending runtime |
 | TC-16 | Archive lifecycle | Active book archives; archived book restores or permanently deletes; files are cleaned up. | Pending runtime |
-| TC-17 | About/reviews | At most six approved real reviews are displayed. | Pending runtime |
-| TC-18 | Favourite/bookmark state | Add/remove state is clear and persists after reload. | Pending runtime |
+| TC-18 | Favourite state | Add/remove state is clear and persists after reload. | Pending runtime |
 | TC-19 | Password change | Current password required; mismatches rejected; valid change succeeds. | Pending runtime |
 
-## Static evidence
+## Verification status
 
-- 70 PHP files scanned with `php -l`.
-- 0 PHP syntax errors.
-- MySQL client/server was not available in the current build environment, so runtime DB tests remain Pending.
+Runtime verification was not performed during the scope reduction. The remaining catalogue, authentication, PDF reading, favourites, history, progress and CRUD workflows still need to be checked in the local XAMPP environment.

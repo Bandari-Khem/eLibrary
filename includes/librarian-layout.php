@@ -19,7 +19,6 @@ $flashes = get_flashes(); ?>
                 href="<?= url('librarian/books/index.php') ?>">Books</a><a
                 href="<?= url('librarian/categories/index.php') ?>">Categories</a><a
                 href="<?= url('librarian/authors/index.php') ?>">Authors</a><a
-                href="<?= url('librarian/reviews/index.php') ?>">Reviews</a>
             <a href="<?= url('index.php') ?>">View
                 site</a>
             <a href="<?= url('librarian/profile/index.php') ?>">Profile</a>
