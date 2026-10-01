@@ -95,7 +95,7 @@ function render_home_books(array $books, string $metric = ''): void
 </section>
 
 <section class="section" id="categories">
-    <div class="section-head"><h2>Browse by category</h2><a href="<?= url('books.php') ?>">All books →</a></div>
+    <div class="section-head"><h2>Browse by category</h2><a href="<?= url('books.php') ?>">All categories →</a></div>
     <?php if ($categories): ?>
         <div class="grid grid-4">
             <?php foreach ($categories as $category): ?>

@@ -1,9 +1,8 @@
 <header class="site-header">
     <div class="container nav"><a class="brand" href="<?= url('index.php') ?>">📚 E-Library</a><button
-            class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
-        <nav class="nav-links">
+            class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-navigation">☰</button>
+        <nav class="nav-links" id="site-navigation">
             <a href="<?= url('books.php') ?>">Books</a>
-            <a href="<?= url('index.php#categories') ?>">Categories</a>
             <a href="<?= url('about.php') ?>">About</a>
             <?php if (current_user()): ?><a
                 href="<?= url(dashboard_for_role(current_user()['role'])) ?>">Dashboard</a><?php if (current_user()['role'] === 'user'): ?><a

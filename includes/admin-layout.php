@@ -15,7 +15,7 @@ $flashes = get_flashes(); ?>
 
 <body>
     <div class="app-shell">
-        <aside class="side-nav"><a class="brand" href="<?= url('admin/dashboard.php') ?>">📚 Admin</a><a
+        <aside class="side-nav" id="panel-navigation"><a class="brand" href="<?= url('admin/dashboard.php') ?>">📚 Admin</a><a
                 href="<?= url('admin/dashboard.php') ?>">Overview</a>
             <a href="<?= url('admin/users/index.php') ?>">Users</a>
             <a href="<?= url('admin/activity-logs/index.php') ?>">Activity logs</a>
@@ -25,7 +25,7 @@ $flashes = get_flashes(); ?>
         </aside>
         <main class="panel-main">
             <div class="mobile-top">
-                <button class="side-toggle">☰</button><strong><?= e($pageTitle) ?></strong>
+                <button class="side-toggle" type="button" aria-label="Toggle admin menu" aria-expanded="false" aria-controls="panel-navigation">☰</button><strong><?= e($pageTitle) ?></strong>
             </div>
             <div class="container">
                 <?php foreach ($flashes as $f): ?>

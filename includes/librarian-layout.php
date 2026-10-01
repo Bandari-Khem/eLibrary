@@ -14,7 +14,7 @@ $flashes = get_flashes(); ?>
 
 <body>
     <div class="app-shell">
-        <aside class="side-nav"><a class="brand" href="<?= url('librarian/dashboard.php') ?>">📚 Librarian</a><a
+        <aside class="side-nav" id="panel-navigation"><a class="brand" href="<?= url('librarian/dashboard.php') ?>">📚 Librarian</a><a
                 href="<?= url('librarian/dashboard.php') ?>">Overview</a><a
                 href="<?= url('librarian/books/index.php') ?>">Books</a><a
                 href="<?= url('librarian/categories/index.php') ?>">Categories</a><a
@@ -25,6 +25,6 @@ $flashes = get_flashes(); ?>
             <a href="<?= url('logout.php') ?>">Logout</a>
         </aside>
         <main class="panel-main">
-            <div class="mobile-top"><button class="side-toggle">☰</button><strong><?= e($pageTitle) ?></strong></div>
+            <div class="mobile-top"><button class="side-toggle" type="button" aria-label="Toggle librarian menu" aria-expanded="false" aria-controls="panel-navigation">☰</button><strong><?= e($pageTitle) ?></strong></div>
             <div class="container"><?php foreach ($flashes as $f): ?><div class="alert <?= e($f['type']) ?>">
                         <?= e($f['message']) ?></div><?php endforeach; ?>

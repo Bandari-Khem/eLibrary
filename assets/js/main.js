@@ -12,14 +12,32 @@ document.addEventListener('DOMContentLoaded', () => {
         t.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    document.addEventListener('click', e => { if (n && n.classList.contains('open') && !n.contains(e.target) && !t.contains(e.target)) closeNav(); });
+    if (n) n.querySelectorAll('a').forEach(link => link.addEventListener('click', closeNav));
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeNav(); document.querySelector('.side-nav.open')?.classList.remove('open'); } });
+    document.addEventListener('click', e => { if (n && t && n.classList.contains('open') && !n.contains(e.target) && !t.contains(e.target)) closeNav(); });
 
-    const s = document.querySelector('.side-toggle'),
-        side = document.querySelector('.side-nav'); if (s && side) s.addEventListener('click', () => side.classList.toggle('open'));
+    const s = document.querySelector('.side-toggle');
+    const side = document.querySelector('.side-nav');
+    const closeSide = () => {
+        if (side) side.classList.remove('open');
+        if (s) s.setAttribute('aria-expanded', 'false');
+    };
 
-    document.addEventListener('click', e => { if (side && side.classList.contains('open') && !side.contains(e.target) && s && !s.contains(e.target)) side.classList.remove('open'); });
+    if (s && side) s.addEventListener('click', () => {
+        const open = side.classList.toggle('open');
+        s.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    if (side) side.querySelectorAll('a').forEach(link => link.addEventListener('click', closeSide));
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            closeNav();
+            closeSide();
+        }
+    });
+
+    document.addEventListener('click', e => { if (side && s && side.classList.contains('open') && !side.contains(e.target) && !s.contains(e.target)) closeSide(); });
 
     document.querySelectorAll('[data-confirm]').forEach(el => el.addEventListener('click', e => { if (!confirm(el.dataset.confirm)) e.preventDefault(); }));
 
