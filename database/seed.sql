@@ -1,0 +1,2 @@
+-- Optional starter data. The schema already seeds rating meanings, settings and FAQs.
+-- Create an administrator through setup/create-admin.php after importing schema.sql.

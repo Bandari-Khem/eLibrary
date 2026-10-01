@@ -1,0 +1,60 @@
+<?php $pageTitle = 'Categories';
+require __DIR__ . '/../../includes/admin-layout.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf();
+    $action = $_POST['action'] ?? '';
+    $name = trim($_POST['name'] ?? '');
+    $parent = (int)($_POST['parent_id'] ?? 0);
+    $desc = trim($_POST['description'] ?? '');
+    if ($action === 'add' && $name) {
+        $s = db()->prepare('INSERT INTO categories(name,parent_id,description) VALUES(?,?,?)');
+        $s->execute([$name, $parent ?: null, $desc]);
+        $cid = (int)db()->lastInsertId();
+        log_activity((int)current_user()['id'], 'create_category', 'category', $cid);
+        flash('success', 'Category added.');
+    } elseif ($action === 'delete') {
+        $id = (int)$_POST['id'];
+        try {
+            db()->prepare('DELETE FROM categories WHERE id=?')->execute([$id]);
+            log_activity((int)current_user()['id'], 'delete_category', 'category', $id);
+            flash('success', 'Category deleted.');
+        } catch (Throwable $e) {
+            flash('error', 'Category cannot be deleted while books or child categories depend on it.');
+        }
+    }
+    redirect('admin/categories/index.php');
+}
+$cats = db()->query('SELECT c.*,p.name parent_name FROM categories c LEFT JOIN categories p ON p.id=c.parent_id ORDER BY COALESCE(p.name,c.name),c.name')->fetchAll(); ?>
+<section class="section">
+    <div class="grid grid-2">
+        <div class="form-card">
+            <h1>Add Category</h1>
+            <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="add">
+                <div class="field">
+                    <label>Name</label>
+                    <input name="name" required maxlength="100">
+                </div>
+                <div class="field">
+                    <label>Parent</label>
+                    <select name="parent_id">
+                        <option value="0">Top level</option>
+                        <?php foreach ($cats as $c): ?>
+                            <option value="<?= $c['id'] ?>">
+                                <?= e($c['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <textarea name="description"></textarea>
+                </div><button class="btn">Add</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>Category tree</h2><?php foreach ($cats as $c): ?><p>📁 <?= e($c['name']) ?>
+                    <?php if ($c['parent_name']): ?><span class="muted">under
+                            <?= e($c['parent_name']) ?></span><?php endif; ?>
+                </p><?php endforeach; ?>
+        </div>
+    </div>
+</section><?php require __DIR__ . '/../../includes/panel-footer.php'; ?>
