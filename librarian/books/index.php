@@ -32,7 +32,16 @@ $books = $s->fetchAll(); ?>
                     <td><?= e($b['category']) ?></td>
                     <td><?= e($b['status']) ?></td>
                     <td><?= $b['file_count'] ?></td>
-                    <td><a class="btn btn-sm" href="<?= url('librarian/books/edit.php?id=' . $b['id']) ?>">Edit</a></td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn-sm" href="<?= url('librarian/books/edit.php?id=' . $b['id']) ?>">Edit</a>
+                            <form method="post" action="<?= url('librarian/books/delete.php') ?>" data-confirm="Delete this book and its uploaded files, reading records, favourites and reviews? This cannot be undone.">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="book_id" value="<?= (int)$b['id'] ?>">
+                                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </td>
                 </tr><?php endforeach; ?>
         </table>
     </div>
