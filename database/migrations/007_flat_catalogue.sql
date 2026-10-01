@@ -8,7 +8,13 @@ ALTER TABLE categories
     DROP INDEX uq_category_name_parent,
     DROP INDEX idx_categories_parent;
 
--- Remove legacy grouping entries while preserving subject categories and books.
+-- Keep the existing subjects as a flat catalogue list.
+UPDATE categories SET parent_id = NULL;
+ALTER TABLE categories
+    DROP COLUMN parent_id,
+    ADD INDEX idx_categories_name (name);
+
+-- Remove the old grouping rows only after removing the self-reference.
 DELETE bc
 FROM book_categories bc
 JOIN categories c ON c.id = bc.category_id
@@ -19,14 +25,23 @@ DELETE FROM categories
 WHERE name IN ('Academic', 'BCA')
    OR name REGEXP '^[0-9]+(st|nd|rd|th)SEM$';
 
--- Keep the existing subjects as a flat catalogue list.
-UPDATE categories SET parent_id = NULL;
-ALTER TABLE categories
-    DROP COLUMN parent_id,
-    ADD INDEX idx_categories_name (name);
-
 -- These features are outside the agreed student-project scope.
 DROP TABLE IF EXISTS faq;
 DROP TABLE IF EXISTS contact_messages;
 DROP TABLE IF EXISTS library_settings;
+
+-- Older installations linked ratings to the now-unneeded label lookup table.
+SET @drop_rating_fk = (
+    SELECT IF(COUNT(*) > 0,
+        'ALTER TABLE reviews DROP FOREIGN KEY fk_reviews_rating',
+        'SELECT 1')
+    FROM information_schema.REFERENTIAL_CONSTRAINTS
+    WHERE CONSTRAINT_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'reviews'
+      AND CONSTRAINT_NAME = 'fk_reviews_rating'
+);
+PREPARE drop_rating_fk_stmt FROM @drop_rating_fk;
+EXECUTE drop_rating_fk_stmt;
+DEALLOCATE PREPARE drop_rating_fk_stmt;
+
 DROP TABLE IF EXISTS review_ratings;
