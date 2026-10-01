@@ -18,7 +18,7 @@ foreach (
 <section class="section grid grid-3"><a class="card" href="<?= url('admin/users/index.php') ?>">
         <h3>Manage users</h3>
         <p>Search accounts and change roles.</p>
-    </a><a class="card" href="<?= url('admin/books/index.php') ?>">
-        <h3>Manage books</h3>
-        <p>Create, edit, archive and publish books.</p>
+    </a><a class="card" href="<?= url('admin/activity-logs/index.php') ?>">
+        <h3>Activity monitoring</h3>
+        <p>Review recent account and catalogue actions.</p>
     </a></section><?php require __DIR__ . '/../includes/panel-footer.php'; ?>

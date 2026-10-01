@@ -5,8 +5,7 @@
         <div><strong>E-Library</strong>
             <p>Read. Learn. Grow.</p>
         </div>
-        <div><a href="<?= url('about.php') ?>">About</a><a href="<?= url('faq.php') ?>">FAQ</a><a
-                href="<?= url('contact.php') ?>">Contact</a><a href="<?= url('privacy.php') ?>">Privacy</a><a
+        <div><a href="<?= url('about.php') ?>">About</a><a href="<?= url('privacy.php') ?>">Privacy</a><a
                 href="<?= url('terms.php') ?>">Terms</a></div>
     </div>
     <div class="container footer-bottom">© <?= date('Y') ?> E-Library · v<?= e(APP_VERSION) ?></div>

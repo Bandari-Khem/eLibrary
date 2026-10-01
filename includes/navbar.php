@@ -4,8 +4,7 @@
         <nav class="nav-links">
             <a href="<?= url('books.php') ?>">Books</a>
             <a href="<?= url('index.php#categories') ?>">Categories</a>
-            <a href="<?= url('about.php') ?>">About</a><a href="<?= url('faq.php') ?>">FAQ</a><a
-                href="<?= url('contact.php') ?>">Contact</a>
+            <a href="<?= url('about.php') ?>">About</a>
             <?php if (current_user()): ?><a
                 href="<?= url(dashboard_for_role(current_user()['role'])) ?>">Dashboard</a><?php if (current_user()['role'] === 'user'): ?><a
                 href="<?= url('user/my-library.php') ?>">My Library</a>

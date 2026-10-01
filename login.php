@@ -42,7 +42,6 @@ require __DIR__ . '/includes/header.php';
             <div class="field"><label for="password">Password</label><input id="password" type="password" name="password" required autocomplete="current-password"></div>
             <button class="btn" style="width:100%;margin-top:12px">Login</button>
         </form>
-        <p><a href="<?= url('forgot-password.php') ?>">Forgot password?</a></p>
         <p>New here? <a href="<?= url('register.php') ?>">Create an account</a></p>
     </div>
 </div>

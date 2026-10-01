@@ -662,16 +662,6 @@ textarea:focus {
     object-fit: cover
 }
 
-.faq-item {
-    border-bottom: 1px solid #e7ebf1;
-    padding: 15px 0
-}
-
-.faq-item summary {
-    cursor: pointer;
-    font-weight: 700
-}
-
 .danger-zone {
     border: 1px solid #f2b8b8;
     background: #fff8f8

@@ -13,6 +13,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ------------------------------------------------------------
 DROP TABLE IF EXISTS favorites;
 DROP TABLE IF EXISTS review_reports;
+DROP TABLE IF EXISTS bookmarks;
+DROP TABLE IF EXISTS downloads;
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS review_ratings;
 DROP TABLE IF EXISTS reading_history;
@@ -58,23 +61,15 @@ CREATE TABLE users (
 
 -- ============================================================
 -- 2. CATEGORIES
--- Supports parent/child category hierarchy
+-- Flat subjects used to organize the catalogue.
 -- ============================================================
 CREATE TABLE categories (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    parent_id INT UNSIGNED NULL,
     description TEXT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    UNIQUE KEY uq_category_name_parent (name, parent_id),
-    INDEX idx_categories_parent (parent_id),
-
-    CONSTRAINT fk_categories_parent
-        FOREIGN KEY (parent_id)
-        REFERENCES categories(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+    INDEX idx_categories_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -351,76 +346,6 @@ CREATE TABLE activity_logs (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- ============================================================
--- 13. LIBRARY SETTINGS
--- ============================================================
-CREATE TABLE library_settings (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    setting_key VARCHAR(100) NOT NULL UNIQUE,
-    setting_value TEXT NULL,
-
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Basic settings
-INSERT INTO library_settings (setting_key, setting_value) VALUES
-('library_name', 'E-Library'),
-('maintenance_mode', '0'),
-('max_upload_mb', '20'),
-('contact_email', '');
-
--- ============================================================
--- 14. CONTACT MESSAGES
--- ============================================================
-CREATE TABLE contact_messages (
-    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL,
-    subject VARCHAR(200) NOT NULL,
-    message TEXT NOT NULL,
-
-    status ENUM('unread', 'read', 'replied')
-        NOT NULL DEFAULT 'unread',
-
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    INDEX idx_contact_status (status),
-    INDEX idx_contact_date (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- 15. FAQ
--- ============================================================
-CREATE TABLE faq (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-
-    question VARCHAR(255) NOT NULL,
-    answer TEXT NOT NULL,
-
-    display_order INT NOT NULL DEFAULT 0,
-    status BOOLEAN NOT NULL DEFAULT TRUE,
-
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
-
-    INDEX idx_faq_order (display_order),
-    INDEX idx_faq_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- OPTIONAL STARTER FAQ DATA
--- ============================================================
-INSERT INTO faq (question, answer, display_order, status) VALUES
-('What is E-Library?', 'E-Library is a web-based platform for browsing, reading and managing digital books.', 1, TRUE),
-('Do I need an account to browse books?', 'No. Public users can browse the catalogue and view book information without logging in.', 2, TRUE),
-('Do I need an account to read or download books?', 'Yes. Reading, downloading and personal library features require an authenticated account.', 3, TRUE),
-('Can I leave a review?', 'Yes. Sign in to rate a book and leave a short message.', 4, TRUE);
 
 -- ============================================================
 -- END OF E-LIBRARY DATABASE SCHEMA

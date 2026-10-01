@@ -1,1 +1,66 @@
-<?php $pageTitle='Categories';require __DIR__.'/../../includes/librarian-layout.php';if($_SERVER['REQUEST_METHOD']==='POST'){verify_csrf();$action=$_POST['action']??'';$name=trim($_POST['name']??'');$parent=(int)($_POST['parent_id']??0);$desc=trim($_POST['description']??'');if($action==='add'&&$name){$s=db()->prepare('INSERT INTO categories(name,parent_id,description) VALUES(?,?,?)');$s->execute([$name,$parent?:null,$desc]);$cid=(int)db()->lastInsertId();log_activity((int)current_user()['id'],'create_category','category',$cid);flash('success','Category added.');}elseif($action==='delete'){ $id=(int)$_POST['id'];$check=db()->prepare('SELECT COUNT(*) FROM book_categories WHERE category_id=?');$check->execute([$id]);$n=(int)$check->fetchColumn();try{db()->prepare('DELETE FROM categories WHERE id=?')->execute([$id]);log_activity((int)current_user()['id'],'delete_category','category',$id);flash('success','Category deleted.');}catch(Throwable $e){flash('error','Category cannot be deleted while books or child categories depend on it.');}}redirect('librarian/categories/index.php');}$cats=db()->query('SELECT c.*,p.name parent_name FROM categories c LEFT JOIN categories p ON p.id=c.parent_id ORDER BY COALESCE(p.name,c.name),c.name')->fetchAll();?><section class="section"><div class="grid grid-2"><div class="form-card"><h1>Add Category</h1><form method="post"><?=csrf_field()?><input type="hidden" name="action" value="add"><div class="field"><label>Name</label><input name="name" required maxlength="100"></div><div class="field"><label>Parent</label><select name="parent_id"><option value="0">Top level</option><?php foreach($cats as $c):?><option value="<?=$c['id']?>"><?=e($c['name'])?></option><?php endforeach;?></select></div><div class="field"><label>Description</label><textarea name="description"></textarea></div><button class="btn">Add</button></form></div><div class="card"><h2>Category tree</h2><?php foreach($cats as $c):?><p>📁 <?=e($c['name'])?> <?php if($c['parent_name']):?><span class="muted">under <?=e($c['parent_name'])?></span><?php endif;?></p><?php endforeach;?></div></div></section><?php require __DIR__.'/../../includes/panel-footer.php';?>
+<?php
+$pageTitle = 'Categories';
+require __DIR__ . '/../../includes/librarian-layout.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf();
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'add') {
+        $name = trim($_POST['name'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        if ($name === '' || strlen($name) > 100) {
+            flash('error', 'Enter a category name up to 100 characters.');
+        } else {
+            $exists = db()->prepare('SELECT id FROM categories WHERE name=? LIMIT 1');
+            $exists->execute([$name]);
+            if ($exists->fetch()) {
+                flash('error', 'A category with that name already exists.');
+            } else {
+                $insert = db()->prepare('INSERT INTO categories(name,description) VALUES(?,?)');
+                $insert->execute([$name, $description]);
+                $categoryId = (int)db()->lastInsertId();
+                log_activity((int)current_user()['id'], 'create_category', 'category', $categoryId);
+                flash('success', 'Category added.');
+            }
+        }
+    } elseif ($action === 'delete') {
+        $categoryId = (int)($_POST['id'] ?? 0);
+        try {
+            db()->prepare('DELETE FROM categories WHERE id=?')->execute([$categoryId]);
+            log_activity((int)current_user()['id'], 'delete_category', 'category', $categoryId);
+            flash('success', 'Category deleted.');
+        } catch (Throwable $e) {
+            flash('error', 'Category cannot be deleted while books use it.');
+        }
+    }
+    redirect('librarian/categories/index.php');
+}
+
+$categories = db()->query('SELECT c.*, COUNT(bc.book_id) AS book_count FROM categories c LEFT JOIN book_categories bc ON bc.category_id=c.id GROUP BY c.id ORDER BY c.name')->fetchAll();
+?>
+<section class="section">
+    <div class="grid grid-2">
+        <div class="form-card">
+            <h1>Add Category</h1>
+            <form method="post">
+                <?= csrf_field() ?>
+                <input type="hidden" name="action" value="add">
+                <div class="field"><label for="name">Name</label><input id="name" name="name" required maxlength="100" placeholder="e.g. C Programming"></div>
+                <div class="field"><label for="description">Description</label><textarea id="description" name="description"></textarea></div>
+                <button class="btn">Add category</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>Book categories</h2>
+            <?php if (!$categories): ?><p class="muted">No categories have been added yet.</p><?php endif; ?>
+            <?php foreach ($categories as $category): ?>
+                <div class="section-head">
+                    <p><strong><?= e($category['name']) ?></strong> <span class="muted">· <?= (int)$category['book_count'] ?> books</span></p>
+                    <form method="post" data-confirm="Delete this category?"><?= csrf_field() ?><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="<?= (int)$category['id'] ?>"><button class="btn btn-sm btn-secondary">Delete</button></form>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php require __DIR__ . '/../../includes/panel-footer.php'; ?>

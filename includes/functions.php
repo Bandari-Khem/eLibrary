@@ -43,23 +43,6 @@ function log_activity(?int $userId, string $action, ?string $targetType = null, 
     } catch (Throwable $e) {
     }
 }
-function setting(string $key, mixed $default = null): mixed
-{
-    static $cache = [];
-    if (array_key_exists($key, $cache)) return $cache[$key];
-    try {
-        $s = db()->prepare('SELECT setting_value FROM library_settings WHERE setting_key=?');
-        $s->execute([$key]);
-        $v = $s->fetchColumn();
-        return $cache[$key] = ($v === false ? $default : $v);
-    } catch (Throwable $e) {
-        return $default;
-    }
-}
-function is_maintenance(): bool
-{
-    return setting('maintenance_mode', '0') === '1';
-}
 function slugify(string $text): string
 {
     $text = trim($text);

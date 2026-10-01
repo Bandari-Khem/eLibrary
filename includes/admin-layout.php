@@ -18,10 +18,7 @@ $flashes = get_flashes(); ?>
         <aside class="side-nav"><a class="brand" href="<?= url('admin/dashboard.php') ?>">📚 Admin</a><a
                 href="<?= url('admin/dashboard.php') ?>">Overview</a>
             <a href="<?= url('admin/users/index.php') ?>">Users</a>
-            <a href="<?= url('admin/books/index.php') ?>">Books</a>
-            <a href="<?= url('admin/categories/index.php') ?>">Categories</a>
-            <a href="<?= url('admin/authors/index.php') ?>">Authors</a>
-            <a href="<?= url('admin/files/index.php') ?>">Files</a>
+            <a href="<?= url('admin/activity-logs/index.php') ?>">Activity logs</a>
             <a href="<?= url('index.php') ?>">View
                 site</a>
             <a href="<?= url('logout.php') ?>">Logout</a>

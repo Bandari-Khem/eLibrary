@@ -1,2 +1,2 @@
--- Optional starter data. The schema already seeds settings and FAQs.
+-- Optional starter data.
 -- Create an administrator through setup/create-admin.php after importing schema.sql.
