@@ -46,8 +46,14 @@ $categories = db()->query('SELECT c.*, COUNT(bc.book_id) AS book_count FROM cate
             <form method="post">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="add">
-                <div class="field"><label for="name">Name</label><input id="name" name="name" required maxlength="100" placeholder="e.g. C Programming"></div>
-                <div class="field"><label for="description">Description</label><textarea id="description" name="description"></textarea></div>
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input id="name" name="name" required maxlength="100" placeholder="e.g. C Programming">
+                </div>
+                <div class="field">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
                 <button class="btn">Add category</button>
             </form>
         </div>
@@ -55,10 +61,16 @@ $categories = db()->query('SELECT c.*, COUNT(bc.book_id) AS book_count FROM cate
             <h2>Book categories</h2>
             <?php if (!$categories): ?><p class="muted">No categories have been added yet.</p><?php endif; ?>
             <?php foreach ($categories as $category): ?>
-                <div class="section-head">
-                    <p><strong><?= e($category['name']) ?></strong> <span class="muted">· <?= (int)$category['book_count'] ?> books</span></p>
-                    <form method="post" data-confirm="Delete this category?"><?= csrf_field() ?><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="<?= (int)$category['id'] ?>"><button class="btn btn-sm btn-secondary">Delete</button></form>
-                </div>
+            <div class="section-head">
+                <p><strong><?= e($category['name']) ?></strong> <span class="muted">·
+                        <?= (int)$category['book_count'] ?> books</span></p>
+                <form method="post" data-confirm="Delete this category?">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="<?= (int)$category['id'] ?>"><button
+                        class="btn btn-sm btn-secondary">Delete</button>
+                </form>
+            </div>
             <?php endforeach; ?>
         </div>
     </div>

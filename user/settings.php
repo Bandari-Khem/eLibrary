@@ -24,18 +24,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } ?>
 <section class="section">
     <div class="form-card">
-        <h1>Account Settings</h1><?php foreach ($errors as $err): ?><div class="alert error"><?= e($err) ?></div>
+        <h1>Account Settings</h1>
+        <?php foreach ($errors as $err): ?>
+            <div class="alert error"><?= e($err) ?></div>
         <?php endforeach; ?><h2>Change password</h2>
-        <form method="post"><?= csrf_field() ?><div class="field"><label>Current password</label><input type="password"
-                    name="current_password" required autocomplete="current-password"></div>
-            <div class="field"><label>New password</label><input type="password" name="new_password" minlength="8"
-                    required autocomplete="new-password"></div>
-            <div class="field"><label>Confirm new password</label><input type="password" name="confirm_password"
-                    minlength="8" required autocomplete="new-password"></div><button class="btn">Change
+        <form method="post"><?= csrf_field() ?>
+            <div class="field">
+                <label>Current password</label>
+                <input type="password" name="current_password" required autocomplete="current-password">
+            </div>
+            <div class="field">
+                <label>New password</label>
+                <input type="password" name="new_password" minlength="8" required autocomplete="new-password">
+            </div>
+            <div class="field">
+                <label>Confirm new password</label>
+                <input type="password" name="confirm_password" minlength="8" required autocomplete="new-password">
+            </div>
+            <br>
+            <button class="btn">Change
                 password</button>
         </form>
         <hr>
-        <p class="muted">Email verification and email-delivered password reset require the future mail-service
-            configuration.</p>
+
     </div>
 </section><?php require __DIR__ . '/../includes/footer.php'; ?>

@@ -1,1 +1,61 @@
-<?php $pageTitle='Authors';require __DIR__.'/../../includes/librarian-layout.php';$errors=[];if($_SERVER['REQUEST_METHOD']==='POST'){verify_csrf();$id=(int)($_POST['id']??0);$name=trim($_POST['name']??'');$bio=trim($_POST['bio']??'');if($name&&strlen($name)<=150){if($id){$s=db()->prepare('UPDATE authors SET name=?,bio=? WHERE id=?');$s->execute([$name,$bio,$id]);log_activity((int)current_user()['id'],'update_author','author',$id);flash('success','Author updated.');}else{$s=db()->prepare('INSERT INTO authors(name,bio) VALUES(?,?)');$s->execute([$name,$bio]);$aid=(int)db()->lastInsertId();log_activity((int)current_user()['id'],'create_author','author',$aid);flash('success','Author added.');}}else flash('error','Author name is required.');redirect('librarian/authors/index.php');}$editId=(int)($_GET['edit']??0);$edit=null;if($editId){$s=db()->prepare('SELECT * FROM authors WHERE id=?');$s->execute([$editId]);$edit=$s->fetch();}$authors=db()->query('SELECT a.*,COUNT(ba.book_id) book_count FROM authors a LEFT JOIN book_authors ba ON ba.author_id=a.id GROUP BY a.id ORDER BY a.name')->fetchAll();?><section class="section"><div class="grid grid-2"><div class="form-card"><h1><?=$edit?'Edit Author':'Add Author'?></h1><form method="post"><?=csrf_field()?><input type="hidden" name="id" value="<?=$edit?(int)$edit['id']:0?>"><div class="field"><label>Name</label><input name="name" required maxlength="150" value="<?=e($edit['name']??'')?>"></div><div class="field"><label>Bio</label><textarea name="bio"><?=e($edit['bio']??'')?></textarea></div><button class="btn"><?=$edit?'Save changes':'Add author'?></button><?php if($edit):?> <a class="btn btn-secondary" href="<?=url('librarian/authors/index.php')?>">Cancel</a><?php endif;?></form></div><div class="table-wrap"><table class="table"><tr><th>Name</th><th>Books</th><th>Action</th></tr><?php foreach($authors as $a):?><tr><td><strong><?=e($a['name'])?></strong><br><small><?=e($a['bio'])?></small></td><td><?=$a['book_count']?></td><td><a class="btn btn-sm" href="<?=url('librarian/authors/index.php?edit='.$a['id'])?>">Edit</a></td></tr><?php endforeach;?></table></div></div></section><?php require __DIR__.'/../../includes/panel-footer.php';?>
+<?php $pageTitle = 'Authors';
+require __DIR__ . '/../../includes/librarian-layout.php';
+$errors = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf();
+    $id = (int)($_POST['id'] ?? 0);
+    $name = trim($_POST['name'] ?? '');
+    $bio = trim($_POST['bio'] ?? '');
+    if ($name && strlen($name) <= 150) {
+        if ($id) {
+            $s = db()->prepare('UPDATE authors SET name=?,bio=? WHERE id=?');
+            $s->execute([$name, $bio, $id]);
+            log_activity((int)current_user()['id'], 'update_author', 'author', $id);
+            flash('success', 'Author updated.');
+        } else {
+            $s = db()->prepare('INSERT INTO authors(name,bio) VALUES(?,?)');
+            $s->execute([$name, $bio]);
+            $aid = (int)db()->lastInsertId();
+            log_activity((int)current_user()['id'], 'create_author', 'author', $aid);
+            flash('success', 'Author added.');
+        }
+    } else flash('error', 'Author name is required.');
+    redirect('librarian/authors/index.php');
+}
+$editId = (int)($_GET['edit'] ?? 0);
+$edit = null;
+if ($editId) {
+    $s = db()->prepare('SELECT * FROM authors WHERE id=?');
+    $s->execute([$editId]);
+    $edit = $s->fetch();
+}
+$authors = db()->query('SELECT a.*,COUNT(ba.book_id) book_count FROM authors a LEFT JOIN book_authors ba ON ba.author_id=a.id GROUP BY a.id ORDER BY a.name')->fetchAll(); ?>
+<section class="section">
+    <div class="grid grid-2">
+        <div class="form-card">
+            <h1><?= $edit ? 'Edit Author' : 'Add Author' ?></h1>
+            <form method="post"><?= csrf_field() ?><input type="hidden" name="id"
+                    value="<?= $edit ? (int)$edit['id'] : 0 ?>">
+                <div class="field"><label>Name</label><input name="name" required maxlength="150"
+                        value="<?= e($edit['name'] ?? '') ?>"></div>
+                <div class="field"><label>Bio</label><textarea name="bio"><?= e($edit['bio'] ?? '') ?></textarea></div>
+                <button class="btn"><?= $edit ? 'Save changes' : 'Add author' ?></button><?php if ($edit): ?> <a
+                        class="btn btn-secondary" href="<?= url('librarian/authors/index.php') ?>">Cancel</a><?php endif; ?>
+            </form>
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Books</th>
+                    <th>Action</th>
+                </tr><?php foreach ($authors as $a): ?><tr>
+                        <td><strong><?= e($a['name']) ?></strong><br><small><?= e($a['bio']) ?></small></td>
+                        <td><?= $a['book_count'] ?></td>
+                        <td><a class="btn btn-sm" href="<?= url('librarian/authors/index.php?edit=' . $a['id']) ?>">Edit</a>
+                        </td>
+                    </tr><?php endforeach; ?>
+            </table>
+        </div>
+    </div>
+</section><?php require __DIR__ . '/../../includes/panel-footer.php'; ?>

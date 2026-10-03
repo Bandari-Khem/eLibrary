@@ -31,6 +31,12 @@ function old(string $key, string $default = ''): string
 {
     return e($_POST[$key] ?? $default);
 }
+function valid_email_address(string $email): bool
+{
+    return strlen($email) <= 150
+        && filter_var($email, FILTER_VALIDATE_EMAIL) !== false
+        && preg_match('/^[^@\s]+@[^@\s]+\.[A-Za-z]{2,63}$/D', $email) === 1;
+}
 function client_ip(): string
 {
     return substr($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0', 0, 45);
@@ -132,17 +138,17 @@ function save_cover_upload(?array $file): ?string
 {
     if (!$file || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return null;
     if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK)
-        throw new RuntimeException('Cover upload failed.');
+        throw new InvalidArgumentException('The cover image did not upload successfully. Please choose it again.');
 
     if (($file['size'] ?? 0) > 5 * 1024 * 1024)
-        throw new RuntimeException('Cover image must be 5 MB or smaller.');
+        throw new InvalidArgumentException('Cover image must be 5 MB or smaller.');
     $ext = strtolower(pathinfo((string)$file['name'], PATHINFO_EXTENSION));
     $types = cover_upload_types();
     if (!isset($types[$ext]))
-        throw new RuntimeException('Cover must be JPG, PNG or WebP.');
+        throw new InvalidArgumentException('Cover must be JPG, PNG or WebP.');
     $info = @getimagesize($file['tmp_name']);
     if (!$info || !isset($info['mime']) || $info['mime'] !== $types[$ext])
-        throw new RuntimeException('Uploaded cover is not a valid image.');
+        throw new InvalidArgumentException('The selected cover is not a valid JPG, PNG or WebP image.');
     if (!is_dir(UPLOAD_COVER_DIR) && !mkdir(UPLOAD_COVER_DIR, 0755, true) && !is_dir(UPLOAD_COVER_DIR))
         throw new RuntimeException('Cover directory unavailable.');
     $stored = bin2hex(random_bytes(16)) . '.' . $ext;

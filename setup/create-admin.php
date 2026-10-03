@@ -24,10 +24,19 @@ require __DIR__ . '/../includes/header.php'; ?>
         <h1>Initial administrator</h1>
         <p>Use this only after importing the database. Remove this setup directory after creating the admin.</p>
         <form method="post"><?= csrf_field() ?>
-            <div class="field"><label>Full name</label><input name="full_name" required></div>
-            <div class="field"><label>Email</label><input type="email" name="email" required></div>
-            <div class="field"><label>Password</label><input type="password" name="password" minlength="12" required>
-            </div><button class="btn">Create admin</button>
+            <div class="field">
+                <label>Full name</label>
+                <input name="full_name" required>
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" minlength="12" required>
+            </div>
+            <button class="btn">Create admin</button>
         </form>
     </div>
 </div><?php require __DIR__ . '/../includes/footer.php'; ?>

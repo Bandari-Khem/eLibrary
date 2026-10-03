@@ -40,9 +40,11 @@ if (current_user()) {
     $myReviewQuery = db()->prepare('SELECT rating,review_text FROM reviews WHERE user_id=? AND book_id=?');
     $myReviewQuery->execute([(int)current_user()['id'], $id]);
     $myReview = $myReviewQuery->fetch() ?: null;
-    $favoriteQuery = db()->prepare('SELECT id FROM favorites WHERE user_id=? AND book_id=?');
-    $favoriteQuery->execute([(int)current_user()['id'], $id]);
-    $isFavorite = (bool)$favoriteQuery->fetchColumn();
+    if (current_user()['role'] === 'user') {
+        $favoriteQuery = db()->prepare('SELECT id FROM favorites WHERE user_id=? AND book_id=?');
+        $favoriteQuery->execute([(int)current_user()['id'], $id]);
+        $isFavorite = (bool)$favoriteQuery->fetchColumn();
+    }
 }
 $pageTitle = $book['title'];
 require __DIR__ . '/includes/header.php';
@@ -76,11 +78,13 @@ $loginUrl = url('login.php?return=' . rawurlencode('book-details.php?id=' . $id)
                     <a class="btn btn-secondary" href="<?= e($loginUrl) ?>">Log in to download</a>
                 <?php endif; ?>
             <?php endforeach; ?>
-            <?php if (current_user()): ?>
+            <?php if (current_user() && current_user()['role'] === 'user'): ?>
                 <form method="post" action="<?= url('user/toggle-favorite.php') ?>">
                     <?= csrf_field() ?><input type="hidden" name="book_id" value="<?= $id ?>">
                     <button class="btn btn-secondary"><?= $isFavorite ? '♥ Remove from favourites' : '♡ Add to favourites' ?></button>
                 </form>
+            <?php elseif (current_user()): ?>
+                <p class="muted" role="status">Only learners can add books to favourites.</p>
             <?php else: ?>
                 <a class="btn btn-secondary" href="<?= e($loginUrl) ?>">Log in to save favourite</a>
             <?php endif; ?>

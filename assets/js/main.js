@@ -41,6 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('[data-confirm]').forEach(el => el.addEventListener('click', e => { if (!confirm(el.dataset.confirm)) e.preventDefault(); }));
 
+    document.querySelectorAll('input[type="file"][name="cover_image"]').forEach(input => {
+        input.addEventListener('change', () => {
+            const marker = input.form?.querySelector('input[name="cover_selected"]');
+            if (marker) marker.value = input.files?.length ? '1' : '0';
+        });
+    });
+
     const cs = document.querySelector('[data-category-search]'),
         sel = document.querySelector('#category');
     if (cs && sel) {

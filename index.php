@@ -20,7 +20,7 @@ $trending = db()->query("SELECT b.*,
     WHERE b.status='published'
       AND EXISTS (SELECT 1 FROM reading_history h WHERE h.book_id=b.id AND h.action='read')
     ORDER BY read_count DESC,b.created_at DESC
-    LIMIT 2")->fetchAll();
+    LIMIT 4")->fetchAll();
 
 $loved = db()->query("SELECT b.*,
     (SELECT GROUP_CONCAT(DISTINCT c.name ORDER BY c.name SEPARATOR ', ')
@@ -33,7 +33,7 @@ $loved = db()->query("SELECT b.*,
     WHERE b.status='published'
       AND EXISTS (SELECT 1 FROM reviews r WHERE r.book_id=b.id AND r.status<>'hidden')
     ORDER BY average_rating DESC,reviewer_count DESC,b.created_at DESC
-    LIMIT 2")->fetchAll();
+    LIMIT 4")->fetchAll();
 
 $reviews = db()->query("SELECT r.rating,r.review_text,r.created_at,u.full_name,b.title,b.id AS book_id
     FROM reviews r
@@ -110,12 +110,12 @@ function render_home_books(array $books, string $metric = ''): void
 
 <section class="section">
     <div class="section-head"><h2>Trending Reads</h2><a href="<?= url('books.php') ?>">Explore books →</a></div>
-    <div class="book-grid"><?php render_home_books($trending, 'reads'); ?></div>
+    <div class="book-grid discovery-grid"><?php render_home_books($trending, 'reads'); ?></div>
 </section>
 
 <section class="section">
     <div class="section-head"><h2>Loved by Learners</h2><a href="<?= url('books.php') ?>">Explore books →</a></div>
-    <div class="book-grid"><?php render_home_books($loved, 'reviews'); ?></div>
+    <div class="book-grid discovery-grid"><?php render_home_books($loved, 'reviews'); ?></div>
 </section>
 
 <section class="section">

@@ -225,9 +225,25 @@ a:hover {
 }
 
 .book-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
     gap: 10px
+}
+
+.book-grid>.book-card {
+    flex: 0 1 calc((100% - 10px) / 2);
+    min-width: 0;
+    max-width: 280px
+}
+
+.book-grid>.empty {
+    flex: 1 1 100%
+}
+
+.discovery-grid>.book-card:nth-of-type(n + 3) {
+    display: none
 }
 
 .book-card {
@@ -704,8 +720,15 @@ textarea:focus {
     }
 
     .book-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 16px
+    }
+
+    .book-grid>.book-card {
+        flex-basis: calc((100% - 32px) / 3)
+    }
+
+    .discovery-grid>.book-card {
+        flex-basis: calc((100% - 16px) / 2)
     }
 
     .book-body {
@@ -772,8 +795,13 @@ textarea:focus {
         grid-template-columns: repeat(2, minmax(0, 1fr))
     }
 
-    .book-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr))
+    .book-grid>.book-card {
+        flex-basis: calc((100% - 48px) / 4);
+        max-width: 250px
+    }
+
+    .discovery-grid>.book-card:nth-of-type(n + 3) {
+        display: flex
     }
 
     .app-shell {

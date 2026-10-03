@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
+    if (!valid_email_address($email) || $password === '') {
         flash('error', 'Enter a valid email and password.');
     } else {
         $query = db()->prepare('SELECT * FROM users WHERE email=? LIMIT 1');

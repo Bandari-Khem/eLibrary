@@ -1,1 +1,9 @@
-<?php $pageTitle='Privacy';require __DIR__.'/includes/header.php';?><section class="section"><div class="card"><h1>Privacy</h1><p>The system stores account information, reading activity and reviews needed to provide the catalogue features. Passwords are stored as secure password hashes. Administrative actions are recorded for accountability.</p><p>Do not upload material you do not have permission to store or distribute.</p></div></section><?php require __DIR__.'/includes/footer.php';?>
+<?php $pageTitle = 'Privacy';
+require __DIR__ . '/includes/header.php'; ?><section class="section">
+    <div class="card">
+        <h1>Privacy</h1>
+        <p>The system stores account information, reading activity and reviews needed to provide the catalogue features.
+        </p>
+        <p>Do not upload material you do not have permission to store or distribute.</p>
+    </div>
+</section><?php require __DIR__ . '/includes/footer.php'; ?>

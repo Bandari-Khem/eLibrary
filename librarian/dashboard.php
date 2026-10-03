@@ -1,1 +1,22 @@
-<?php $pageTitle='Librarian Dashboard';require __DIR__.'/../includes/librarian-layout.php';$stats=['books'=>(int)db()->query('SELECT COUNT(*) FROM books')->fetchColumn(),'authors'=>(int)db()->query('SELECT COUNT(*) FROM authors')->fetchColumn(),'categories'=>(int)db()->query('SELECT COUNT(*) FROM categories')->fetchColumn()];?><section class="section"><h1>Library Operations</h1><div class="stats"><div class="stat">Books<strong><?=$stats['books']?></strong></div><div class="stat">Authors<strong><?=$stats['authors']?></strong></div><div class="stat">Categories<strong><?=$stats['categories']?></strong></div></div></section><div class="grid grid-2"><a class="card" href="<?=url('librarian/books/add.php')?>"><h3>Add book</h3><p>Upload a PDF and enter its catalogue information.</p></a><a class="card" href="<?=url('librarian/books/index.php')?>"><h3>Manage catalogue</h3><p>Edit and archive library books.</p></a></div><?php require __DIR__.'/../includes/panel-footer.php';?>
+<?php $pageTitle = 'Librarian Dashboard';
+require __DIR__ . '/../includes/librarian-layout.php';
+$stats = [
+    'books' => (int)db()->query('SELECT COUNT(*) FROM books')->fetchColumn(),
+    'authors' => (int)db()->query('SELECT COUNT(*) FROM authors')->fetchColumn(),
+    'categories' => (int)db()->query('SELECT COUNT(*) FROM categories')->fetchColumn()
+]; ?>
+<section class="section">
+    <h1>Library Operations</h1>
+    <div class="stats">
+        <div class="stat">Books<strong><?= $stats['books'] ?></strong></div>
+        <div class="stat">Authors<strong><?= $stats['authors'] ?></strong></div>
+        <div class="stat">Categories<strong><?= $stats['categories'] ?></strong></div>
+    </div>
+</section>
+<div class="grid grid-2"><a class="card" href="<?= url('librarian/books/add.php') ?>">
+        <h3>Add book</h3>
+        <p>Upload a PDF and enter its catalogue information.</p>
+    </a><a class="card" href="<?= url('librarian/books/index.php') ?>">
+        <h3>Manage catalogue</h3>
+        <p>Edit and archive library books.</p>
+    </a></div><?php require __DIR__ . '/../includes/panel-footer.php'; ?>

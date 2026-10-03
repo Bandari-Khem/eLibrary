@@ -54,7 +54,8 @@ require __DIR__ . '/includes/header.php';
         <form class="category-search-form" method="get">
             <div class="field">
                 <label for="category-name">Find a category</label>
-                <input id="category-name" name="category_name" list="category-options" value="<?= e($categoryName) ?>" placeholder="Start typing a subject" autocomplete="off">
+                <input id="category-name" name="category_name" list="category-options" value="<?= e($categoryName) ?>"
+                    placeholder="Start typing a subject" autocomplete="off">
                 <datalist id="category-options">
                     <?php foreach ($categories as $category): ?>
                         <option value="<?= e($category['name']) ?>"></option>
@@ -73,7 +74,8 @@ require __DIR__ . '/includes/header.php';
                 <?php foreach ($categories as $category): ?>
                     <a class="card category-card" href="<?= url('books.php?category=' . (int)$category['id']) ?>">
                         <h2><?= e($category['name']) ?></h2>
-                        <p class="muted"><?= (int)$category['book_count'] ?> book<?= (int)$category['book_count'] === 1 ? '' : 's' ?></p>
+                        <p class="muted"><?= (int)$category['book_count'] ?>
+                            book<?= (int)$category['book_count'] === 1 ? '' : 's' ?></p>
                     </a>
                 <?php endforeach; ?>
             </div>
@@ -129,7 +131,8 @@ require __DIR__ . '/includes/header.php';
 
         <form class="search-bar" method="get">
             <input type="hidden" name="category" value="<?= $categoryId ?>">
-            <input name="q" value="<?= e($term) ?>" placeholder="Search this category by title or author" aria-label="Search this category by title or author">
+            <input name="q" value="<?= e($term) ?>" placeholder="Search this category by title or author"
+                aria-label="Search this category by title or author">
             <button class="btn" type="submit">Search</button>
         </form>
         <form method="get" class="catalogue-sort">
@@ -150,12 +153,19 @@ require __DIR__ . '/includes/header.php';
             <div class="book-grid">
                 <?php foreach ($books as $book): ?>
                     <article class="book-card">
-                        <div class="cover"><?php if ($book['cover_image']): ?><img src="<?= url($book['cover_image']) ?>" alt="<?= e($book['title']) ?> cover"><?php else: ?>📖<?php endif; ?></div>
+                        <div class="cover"><?php if ($book['cover_image']): ?><img src="<?= url($book['cover_image']) ?>"
+                                    alt="<?= e($book['title']) ?> cover"><?php else: ?>📖<?php endif; ?></div>
                         <div class="book-body">
                             <h2><?= e($book['title']) ?></h2>
                             <div class="muted">By <?= e($book['authors'] ?: 'Unknown author') ?></div>
-                            <div class="muted"><?= e($book['category'] ?: 'Uncategorized') ?><?= $book['publication_year'] ? ' · ' . e((string)$book['publication_year']) : '' ?></div>
-                            <div class="stars">★ <?= $book['average_rating'] !== null ? e((string)$book['average_rating']) . ' / 5' : 'Not rated' ?> <span class="muted">· <?= (int)$book['reviewer_count'] ?> review<?= (int)$book['reviewer_count'] === 1 ? '' : 's' ?></span></div>
+                            <div class="muted">
+                                <?= e($book['category'] ?: 'Uncategorized') ?><?= $book['publication_year'] ? ' · ' . e((string)$book['publication_year']) : '' ?>
+                            </div>
+                            <div class="stars">★
+                                <?= $book['average_rating'] !== null ? e((string)$book['average_rating']) . ' / 5' : 'Not rated' ?>
+                                <span class="muted">· <?= (int)$book['reviewer_count'] ?>
+                                    review<?= (int)$book['reviewer_count'] === 1 ? '' : 's' ?></span>
+                            </div>
                             <a class="btn btn-sm" href="<?= url('book-details.php?id=' . (int)$book['id']) ?>">Book details</a>
                         </div>
                     </article>
@@ -168,7 +178,9 @@ require __DIR__ . '/includes/header.php';
         <?php if ($pages > 1): ?>
             <nav class="pagination" aria-label="Book pages">
                 <?php for ($i = 1; $i <= $pages; $i++): ?>
-                    <a class="<?= $i === $page ? 'current' : '' ?>" href="?<?= http_build_query(['category' => $categoryId, 'q' => $term, 'sort' => $sort, 'page' => $i]) ?>" <?= $i === $page ? 'aria-current="page"' : '' ?>><?= $i ?></a>
+                    <a class="<?= $i === $page ? 'current' : '' ?>"
+                        href="?<?= http_build_query(['category' => $categoryId, 'q' => $term, 'sort' => $sort, 'page' => $i]) ?>"
+                        <?= $i === $page ? 'aria-current="page"' : '' ?>><?= $i ?></a>
                 <?php endfor; ?>
             </nav>
         <?php endif; ?>

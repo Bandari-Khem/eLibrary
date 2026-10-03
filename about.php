@@ -5,7 +5,8 @@ require __DIR__ . '/includes/header.php';
 <section class="section">
     <span class="chip">About the library</span>
     <h1>A simple place to find and read books</h1>
-    <p class="lead">The eLibrary catalogue brings learning and general reading resources together in one searchable place.</p>
+    <p class="lead">The eLibrary catalogue brings learning and general reading resources together in one searchable
+        place.</p>
 </section>
 <section class="section" id="services">
     <div class="section-head">
@@ -37,10 +38,14 @@ require __DIR__ . '/includes/header.php';
     <h2>References</h2>
     <p class="muted">Official documentation consulted for the technologies used in this project.</p>
     <ul class="reference-list">
-        <li><a href="https://www.php.net/manual/en/" target="_blank" rel="noopener noreferrer">PHP Manual</a> <span class="muted">— server-side programming</span></li>
-        <li><a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" rel="noopener noreferrer">MySQL 8.0 Reference Manual</a> <span class="muted">— relational database and SQL</span></li>
-        <li><a href="https://developer.mozilla.org/en-US/docs/Web" target="_blank" rel="noopener noreferrer">MDN Web Docs</a> <span class="muted">— HTML, CSS and JavaScript</span></li>
-        <li><a href="https://mozilla.github.io/pdf.js/getting_started/" target="_blank" rel="noopener noreferrer">PDF.js Getting Started</a> <span class="muted">— browser PDF reading</span></li>
+        <li><a href="https://www.php.net/manual/en/" target="_blank" rel="noopener noreferrer">PHP Manual</a> <span
+                class="muted">— server-side programming</span></li>
+        <li><a href="https://dev.mysql.com/doc/refman/8.0/en/" target="_blank" rel="noopener noreferrer">MySQL 8.0
+                Reference Manual</a> <span class="muted">— relational database and SQL</span></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web" target="_blank" rel="noopener noreferrer">MDN Web
+                Docs</a> <span class="muted">— HTML, CSS and JavaScript</span></li>
+        <li><a href="https://mozilla.github.io/pdf.js/getting_started/" target="_blank" rel="noopener noreferrer">PDF.js
+                Getting Started</a> <span class="muted">— browser PDF reading</span></li>
     </ul>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>

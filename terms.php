@@ -1,1 +1,8 @@
-<?php $pageTitle='Terms';require __DIR__.'/includes/header.php';?><section class="section"><div class="card"><h1>Terms of Use</h1><p>Use the library for lawful educational and personal purposes. Respect copyright and the permissions associated with every electronic document. Accounts may be suspended for abuse or policy violations.</p></div></section><?php require __DIR__.'/includes/footer.php';?>
+<?php $pageTitle = 'Terms';
+require __DIR__ . '/includes/header.php'; ?><section class="section">
+    <div class="card">
+        <h1>Terms of Use</h1>
+        <p>Use the library for lawful educational and personal purposes. Respect copyright and the permissions
+            associated with every electronic document. Accounts may be suspended for abuse or policy violations.</p>
+    </div>
+</section><?php require __DIR__ . '/includes/footer.php'; ?>
